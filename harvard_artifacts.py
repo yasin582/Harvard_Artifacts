@@ -227,7 +227,7 @@ query_options = {
     "4. List artifact titles ordered by accession year in descending order.": "SELECT title, accessionyear FROM artifact_metadata ORDER BY accessionyear DESC",
     "5. How many artifacts are there per department?": "SELECT department, COUNT(*) as number_of_artifacts FROM artifact_metadata GROUP BY department",
     "6. Which artifacts have more than 3 images?": "SELECT objectid, title FROM artifact_metadata JOIN artifact_media ON artifact_metadata.id = artifact_media.objectid WHERE imagecount > 3",
-    "7. What is the average rank of all artifacts?": "SELECT AVG(rank) FROM artifact_media",
+    "7. What is the average rank of all artifacts?": "SELECT AVG(media_rank) FROM artifact_media",
     "8. Which artifacts have a higher mediacount than colorcount?": "SELECT objectid, title FROM artifact_metadata JOIN artifact_media ON artifact_metadata.id = artifact_media.objectid WHERE mediacount > colorcount",
     "9. List all artifacts created between 1500 and 1600.": "SELECT title FROM artifact_metadata JOIN artifact_media ON artifact_metadata.id = artifact_media.objectid WHERE datebegin >= 1500 AND dateend <= 1600",
     "10. How many artifacts have no media files?": "SELECT COUNT(*) FROM artifact_media WHERE mediacount = 0",
@@ -238,8 +238,8 @@ query_options = {
     "15. What is the total number of color entries in the dataset?": "SELECT COUNT(*) FROM artifacts_colors",
     "16. List artifact titles and hues for all artifacts belonging to the Byzantine culture.": "SELECT m.title, c.hue FROM artifact_metadata m JOIN artifacts_colors c ON m.id = c.objectid WHERE m.culture = 'Byzantine'",
     "17. List each artifact title with its associated hues.": "SELECT m.title, c.hue FROM artifact_metadata m JOIN artifacts_colors c ON m.id = c.objectid",
-    "18. Get artifact titles, cultures, and media ranks where the period is not null.": "SELECT m.title, m.culture, a.rank FROM artifact_metadata m JOIN artifact_media a ON m.id = a.objectid WHERE m.period IS NOT NULL",
-    "19. Find artifact titles ranked in the top 10 that include the color hue 'Grey'.": "SELECT m.title, a.rank, c.hue FROM artifact_metadata m JOIN artifact_media a ON m.id = a.objectid JOIN artifacts_colors c ON m.id = c.objectid WHERE a.rank <= 10 AND c.hue = 'Grey'",
+    "18. Get artifact titles, cultures, and media ranks where the period is not null.": "SELECT m.title, m.culture, a.media_rank FROM artifact_metadata m JOIN artifact_media a ON m.id = a.objectid WHERE m.period IS NOT NULL",
+    "19. Find artifact titles ranked in the top 10 that include the color hue 'Grey'.": "SELECT m.title, a.media_rank, c.hue FROM artifact_metadata m JOIN artifact_media a ON m.id = a.objectid JOIN artifacts_colors c ON m.id = c.objectid WHERE a.rank <= 10 AND c.hue = 'Grey'",
     "20. How many artifacts exist per classification, and what is the average media count for each?": "SELECT m.classification, COUNT(*) AS artifact_count, AVG(a.mediacount) AS avg_media FROM artifact_metadata m JOIN artifact_media a ON m.id = a.objectid GROUP BY m.classification",
     "Extra Query 1: Most common artifact titles": "SELECT title, COUNT(*) AS title_count FROM artifact_metadata GROUP BY title ORDER BY title_count DESC",
     "Extra Query 2: Earliest and latest artifacts": "SELECT title, accessionyear FROM artifact_metadata WHERE accessionyear = (SELECT MIN(accessionyear) FROM artifact_metadata) OR accessionyear = (SELECT MAX(accessionyear) FROM artifact_metadata)",
@@ -273,4 +273,5 @@ if st.button("Run Query"):
     finally:
             if 'connection' in locals() and connection.is_connected():
                 mycursor.close()
+
                 connection.close()
